@@ -39,10 +39,14 @@ func handClient(conn net.Conn) {
 			cmd, err := parser.Parse(buf)
 			if err != nil {
 				fmt.Print(err)
-			} else {
-				command.CommandHandler(cmd)
+				return
 			}
-			// conn.Write([]byte("+PONG\r\n"))
+			result, err := command.CommandHandler(cmd)
+			if err != nil {
+				fmt.Print(err)
+			} else {
+				conn.Write(result)
+			}
 		}
 	}
 }
