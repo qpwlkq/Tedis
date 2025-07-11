@@ -5,8 +5,8 @@ import (
 	"net"
 	"os"
 
-	"github.com/codecrafters-io/redis-starter-go/app/parser"
 	"github.com/codecrafters-io/redis-starter-go/app/command"
+	"github.com/codecrafters-io/redis-starter-go/app/parser"
 )
 
 var _ = net.Listen
@@ -36,12 +36,15 @@ func handClient(conn net.Conn) {
 	for {
 		n, _ := conn.Read(buf)
 		if n > 0 {
+			fmt.Println(string(buf))
 			cmd, err := parser.Parse(buf)
 			if err != nil {
 				fmt.Print(err)
 				return
 			}
 			result, err := command.CommandHandler(cmd)
+			fmt.Println("result:")
+			fmt.Println(string(result))
 			if err != nil {
 				fmt.Print(err)
 			} else {

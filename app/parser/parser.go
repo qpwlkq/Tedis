@@ -68,23 +68,26 @@ func ParseRESP(input string) ([]string, error) {
 
 // *<number-of-elements>\r\n<element-1>...<element-n>
 func ParseArrays(input string) ([]string, error) {
-	splits := strings.Split(input, "\r\n")
-	num, err := strconv.Atoi(splits[0][1:])
+	splits := strings.FieldsFunc(input, Split)
+	fmt.Println(splits)
+	num, err := strconv.Atoi(strings.TrimRight(splits[0], "\r\n"))
 	if err != nil {
 		return nil, errors.New("parse failed")
 	}
 	fmt.Print(num)
 	result := []string{}
 	for _, resp := range splits[1:] {
-		pr, err := ParseRESP(resp)
+		pr, err := ParseBulkString(resp)
 		if err != nil {
 			return nil, err
 		}
-		for _, r := range pr {
-			result = append(result, r)
-		}
+		result = append(result, pr...)
 	}
 	return result, nil
+}
+
+func Split(r rune) bool {
+	return r == '+' || r == '-' || r == '$' || r == '*' || r == '_' || r == '#' || r == ',' || r == '(' || r == '%' || r == '!' || r == '=' || r == '|' || r == '~' || r == '>'
 }
 
 // $<length>\r\n<data>\r\n

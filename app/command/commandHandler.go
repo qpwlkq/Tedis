@@ -1,11 +1,18 @@
 package command
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 func CommandHandler(command *Command) ([]byte, error) {
 	switch command.Name {
 	case "ECHO":
-		return []byte(command.Args[0]), nil
+		s := "$" + strconv.Itoa(len(command.Args[0])) + "\r\n" + command.Args[0] + "\r\n"
+		return []byte(s), nil
+	case "PING":
+		s := "$4\r\nPONG\r\n"
+		return []byte(s), nil
 	}
 	return nil, errors.New("??")
 }
