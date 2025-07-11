@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"net"
 	"os"
+
+	"github.com/codecrafters-io/redis-starter-go/app/parser"
+	"github.com/codecrafters-io/redis-starter-go/app/command"
 )
 
 var _ = net.Listen
@@ -33,7 +36,13 @@ func handClient(conn net.Conn) {
 	for {
 		n, _ := conn.Read(buf)
 		if n > 0 {
-			conn.Write([]byte("+PONG\r\n"))
+			cmd, err := parser.Parse(buf)
+			if err != nil {
+				fmt.Print(err)
+			} else {
+				command.CommandHandler(cmd)
+			}
+			// conn.Write([]byte("+PONG\r\n"))
 		}
 	}
 }
